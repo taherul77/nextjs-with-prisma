@@ -32,10 +32,10 @@ export default function RootLayout({
       >
         <QueryClientProvider>
           <Theme accentColor="violet">
-            <Navbar />
-            <main className="p-5">
-              <Container>{children}</Container>
-            </main>
+            <Container>
+              <Navbar />
+              <main className="p-5">{children}</main>
+            </Container>
           </Theme>
         </QueryClientProvider>
       </body>
