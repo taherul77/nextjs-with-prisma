@@ -8,7 +8,7 @@ import { Callout } from "@radix-ui/themes";
 import LabelInputContainer from "./LabelInputContainer";
 
 // ✅ Import Quill.js editor and styles
-import { QuillEditor, useQuill } from "react-quilljs";
+import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css"; // Quill's default snow theme
 
 const IssueForm = ({ issue }: { issue?: Issue }) => {
@@ -19,7 +19,6 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
