@@ -2,7 +2,7 @@ import IssueStatusBadge from "@/app/components/IssueStatusBadge";
 import { Issue } from "@prisma/client";
 import { Card, Flex, Heading, Text } from "@radix-ui/themes";
 import ReactMarkdown from "react-markdown";
-
+import rehypeRaw from 'rehype-raw';
 const IssueDetailsComponent = ({ issue }: { issue: Issue }) => {
   return (
     <>
@@ -12,7 +12,9 @@ const IssueDetailsComponent = ({ issue }: { issue: Issue }) => {
         <Text>{issue.createdAt.toDateString()}</Text>
       </Flex>
       <Card className="prose max-w-full" mt="4">
-        <ReactMarkdown>{issue.description}</ReactMarkdown>
+      <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+        {issue.description}
+      </ReactMarkdown>
       </Card>
     </>
   );

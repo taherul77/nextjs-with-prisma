@@ -7,6 +7,7 @@ import React from "react";
 
 import IssueDetailsComponent from "./IssueDetailsComponent";
 import EditIssueButton from "./EditIssueButton";
+import DeleteIssueButton from "./DeleteIssueButton";
 interface IssueDetailsProps {
   params: {
     id: string;
@@ -42,7 +43,7 @@ const IssueDetails = async ({ params }: IssueDetailsProps) => {
           <Flex direction="column" gap="4">
             {/* <AssigneeSelect issue={issue} /> */}
             <EditIssueButton issueId={issue.id} />
-            {/* <DeleteIssueButton issueId={issue.id} /> */}
+            <DeleteIssueButton issueId={issue.id} />
           </Flex>
         </Box>
    
