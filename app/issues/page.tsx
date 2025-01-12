@@ -11,7 +11,7 @@ const IssuesPage = async () => {
   return (
     <div>
       <div className="mb-5">
-        <Button>
+        <Button className="bg-primary text-white">
           <Link href="/issues/new"> New Issue </Link>
         </Button>
       </div>

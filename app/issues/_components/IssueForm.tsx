@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -7,14 +7,18 @@ import { Issue } from "@prisma/client";
 import { Callout } from "@radix-ui/themes";
 import LabelInputContainer from "./LabelInputContainer";
 
-// ✅ Import Quill.js editor and styles
 import { useQuill } from "react-quilljs";
-import "quill/dist/quill.snow.css"; // Quill's default snow theme
+import "quill/dist/quill.snow.css";
+
+enum Status {
+  OPEN = "OPEN",
+  IN_PROGRESS = "IN_PROGRESS",
+  DONE = "DONE",
+}
 
 const IssueForm = ({ issue }: { issue?: Issue }) => {
   const router = useRouter();
 
-  // ✅ Setup form with useForm
   const {
     register,
     handleSubmit,
@@ -24,13 +28,13 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
     defaultValues: {
       title: issue?.title || "",
       description: issue?.description || "",
+      status: issue?.status || Status.OPEN,
     },
   });
 
   const [error, setError] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
 
-  // ✅ Quill editor setup
   const { quill, quillRef } = useQuill({
     modules: {
       toolbar: [
@@ -43,16 +47,18 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
     placeholder: "Write your cover letter here...",
   });
 
-  // ✅ Update form state when Quill editor content changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (quill) {
       quill.on("text-change", () => {
         setValue("description", quill.root.innerHTML);
       });
-    }
-  }, [quill, setValue]);
 
-  // ✅ Form submission handler
+      if (issue?.description) {
+        quill.clipboard.dangerouslyPasteHTML(issue.description);
+      }
+    }
+  }, [quill, setValue, issue]);
+
   const onSubmit = handleSubmit(async (data) => {
     try {
       setSubmitting(true);
@@ -66,7 +72,9 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
     } catch (error: unknown) {
       setSubmitting(false);
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "An unexpected error occurred.");
+        setError(
+          error.response?.data?.message || "An unexpected error occurred."
+        );
       } else {
         setError("An unexpected error occurred.");
       }
@@ -86,9 +94,8 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
             className="space-y-6 border-2 rounded-lg p-4 shadow-xl"
             onSubmit={onSubmit}
           >
-            <h1 className="text-2xl font-bold">Submit Your Application</h1>
+            <h1 className="text-2xl font-bold">Submit </h1>
 
-            {/* ✅ Title Input */}
             <LabelInputContainer>
               <input
                 id="title"
@@ -102,22 +109,37 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
               )}
             </LabelInputContainer>
 
-            {/* ✅ Description Quill Editor */}
             <LabelInputContainer>
               <div ref={quillRef} />
               {errors.description && (
-                <p className="text-red-500 text-sm">{errors.description.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.description.message}
+                </p>
               )}
             </LabelInputContainer>
 
-            {/* ✅ Submit Button */}
+            <LabelInputContainer>
+              <select
+                id="status"
+                className="w-full"
+                {...register("status", { required: "Status is required" })}
+              >
+                <option value={Status.OPEN}>Open</option>
+                <option value={Status.IN_PROGRESS}>In Progress</option>
+                <option value={Status.DONE}>Done</option>
+              </select>
+              {errors.status && (
+                <p className="text-red-500 text-sm">{errors.status.message}</p>
+              )}
+            </LabelInputContainer>
+
             <button
               disabled={isSubmitting}
               className={`w-full sm:w-auto rounded-full uppercase px-4 py-2 text-white bg-gradient-to-r from-[#4B1E7F] to-[#FC6617] mt-4 text-xs font-bold ${
                 isSubmitting ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              Send Application
+              Send
             </button>
           </form>
         </div>
