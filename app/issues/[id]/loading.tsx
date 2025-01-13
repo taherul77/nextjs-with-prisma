@@ -4,7 +4,7 @@ import React from 'react'
 const IssueDetailsLoadingPage = () => {
   return (
     <div>
-        <Skeleton count={5} />
+        <Skeleton count={6} />
     </div>
   )
 }
